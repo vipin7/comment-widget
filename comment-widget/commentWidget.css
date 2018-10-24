@@ -96,3 +96,8 @@
 .commentContentParent > div > .commentText {
     margin-top: 3%;
 }
+
+.editInput {
+    border: none !important;
+    width: 95% !important;
+}

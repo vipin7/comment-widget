@@ -92,12 +92,32 @@ Comment.prototype.renderComments = function() {
         commentTextDiv.innerText = this.commentContent[i].content;
         commentDiv.appendChild(commentTextDiv);
 
-        const replyButtonDiv = document.createElement('div');
+        const replyButtonDiv = document.createElement('span');
         replyButtonDiv.className = "replyButtonDiv";
         const button = document.createElement('button');
         button.innerText = "Reply";
         replyButtonDiv.appendChild(button);
         commentDiv.appendChild(replyButtonDiv);
+
+        //create button to delete comments
+        const deleteButtonDiv = document.createElement('span');
+        deleteButtonDiv.className = "replyButtonDiv";
+        const deleteButton = document.createElement('button');
+        deleteButton.innerText = "Delete";
+        deleteButtonDiv.appendChild(deleteButton);
+        commentDiv.appendChild(deleteButtonDiv);
+        //pass index of comment to delete comment function
+        deleteButton.addEventListener("click", () => this.deleteComment(i));
+
+        //create button to edit comments
+        const editButtonDiv = document.createElement('span');
+        editButtonDiv.className = "replyButtonDiv";
+        const editButton = document.createElement('button');
+        editButton.innerText = "Edit";
+        editButtonDiv.appendChild(editButton);
+        commentDiv.appendChild(editButtonDiv);
+        //pass comment element that needs to be edited and its index to edit comment function
+        editButton.addEventListener("click", () => this.editComment(i, commentTextDiv)); 
         
         //input field element to add a reply
         const replyInputDiv = document.createElement('div');
@@ -141,4 +161,37 @@ Comment.prototype.renderComments = function() {
 Comment.prototype.addReply = function(reply, i) {
     this.commentContent[i].reply.push(reply);
     this.renderComments();
+}
+
+//delete a comment
+Comment.prototype.deleteComment = function(index) {
+    //remove cooment corresponding to passed index and re-render comments
+    this.commentContent.splice(index, 1);
+    this.renderComments();
+    if(!this.commentContent.length) {
+        this.commentDisplayDiv.style.display = "none";
+    }
+}
+
+Comment.prototype.editComment = function(index, commentTextDiv) {
+    //store previous value of comment to display
+    const previousComment = commentTextDiv.innerText;
+    //remove the inner text from comment text div
+    commentTextDiv.removeChild(commentTextDiv.childNodes[0]);
+    //create input div to edit comment
+    const editInput = document.createElement('input');
+    editInput.className = "editInput";
+    commentTextDiv.style.backgroundColor = "white";
+    commentTextDiv.appendChild(editInput);
+    //show previous value of comment in edit input
+    editInput.value = previousComment;
+    editInput.focus();
+
+    //add the new comment to this.commentContent and re-render comments
+    editInput.addEventListener("keypress", (event) => {
+        if(event.keyCode === 13) {
+            this.commentContent[index].content = editInput.value;
+            this.renderComments();
+        }
+    })
 }
